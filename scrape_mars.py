@@ -8,8 +8,6 @@ import datetime as dt
 # %%
 executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
 browser = Browser('chrome', **executable_path, headless=False)
-
-
 def mars_news(browser):
     url = 'https://mars.nasa.gov/news/'
     browser.visit(url)
@@ -82,7 +80,7 @@ def hemisphere(browser):
         hemi['title'] = browser.find_by_css("h2.title").text
         hemi_links.append(hemi)
         browser.back()
-    hemi_links   
+    return hemi_links   
 # %%
 def scrape_hemisphere(html_text):
     hemi_html = bs(html_text, "html.parser")
@@ -97,5 +95,26 @@ def scrape_hemisphere(html_text):
         "img_url": sample
     }
     return hemisphere
+# %%
+def scrape():
+    article, headline = mars_news(browser)
+    image = featured_image(browser)
+    weather_text = mars_weather(browser)
+    facts = mars_facts(browser)
+    hemi_links = hemisphere(browser)
+    timestamp = dt.datetime.now()
 
+    data = {
+        "article": article,
+        "headline": headline,
+        "featured_image": image,
+        "weather": weather_text,
+        "facts": facts,
+        "hemispheres": hemi_links,
+        "update": timestamp
+    }
+    browser.quit()
+    return data 
 
+if __name__ == "__main__":
+    print(scrape())
